@@ -16,6 +16,7 @@ import os
 import shutil
 import traceback
 import uuid
+#import pdb
 
 from rally.common import cfg
 from rally.env import platform
@@ -96,12 +97,13 @@ class KubernetesPlatform(platform.Platform):
     }
 
     def create(self):
+        #pdb.set_trace()
         # NOTE(andreykurilin): Let's save only paths to ca, key and cacert
         #   instead of saving the actual content, since paths are what
         #   KubernetesClient are actually expects to see. In further
         #   development, it would be nice to hack these and store keys in the
-        #   Rally database.
-        for key in ("certificate-authority", "client-certificate",
+        #i   Rally database.
+        for key in ("certificate-authority-data", "client-certificate",
                     "client-key"):
             if key in self.spec:
                 self.spec[key] = os.path.abspath(
@@ -127,7 +129,7 @@ class KubernetesPlatform(platform.Platform):
         return {"available": True}
 
     def cleanup(self, task_uuid=None):
-        for key in ("certificate-authority", "client-certificate",
+        for key in ("certificate-authority-data", "client-certificate",
                     "client-key"):
             if key in self.spec:
                 if os.path.exists(self.spec[key]):
@@ -226,9 +228,10 @@ class KubernetesPlatform(platform.Platform):
               Kubernetes host.
         """
         k8s_cfg = k8s_service.Kubernetes.create_spec_from_file()
+        #pdb.set_trace()
 
         host = k8s_cfg.get("host") or sys_environ.get("KUBERNETES_HOST")
-        cert_auth = (k8s_cfg.get("certificate-authority") or
+        cert_auth = (k8s_cfg.get("certificate-authority-data") or
                      sys_environ.get("KUBERNETES_CERT_AUTH"))
 
         if not (host and cert_auth):

@@ -294,6 +294,59 @@ class Kubernetes(service.Service):
                                    resource_type="Namespace",
                                    read_method=self.get_namespace)
 
+    @atomic.action_timer("kubernetes.create_network_policy")
+    def create_network_policy(self, name, namespace, status_wait=True):
+        """Create network policy and wait until status phase won't be Active.
+
+        :param status_wait: wait network policy for Active status
+        """
+        name = self.generate_random_name()
+        manifest = {
+            "apiVersion": "networking.k8s.io/v1",
+            "kind": "NetworkPolicy",
+            "metadata": {
+                "name": name
+            },
+            "spec": {
+                "podSelector": {
+                    "matchLabels": {
+                        "run": name
+                    }
+                },
+                "ingress": [
+                    {
+                        "from": [
+                            {
+                                "podSelector": {
+                                    "matchLabels": {
+                                        "access": "true"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+
+        self.v1_client.create_namespaced_network_policy(body=manifest)
+        if status_wait:
+            with atomic.ActionTimer(self,
+                                    "kubernetes.wait_for__become_active"):
+                wait_for_status(name,
+                                resource_type="NetworkPolicy",
+                                status="Active",
+                                read_method=self.read_namespaced_network_policy)
+        return name
+   
+    @atomic.action_timer("kubernetes.get_network_policy")
+    def get_network_policy(self, name):
+        """Get namespace status.
+
+        :param name: namespace name
+        """
+        return self.read_namespaced_network_policy(name)
+
     @atomic.action_timer("kubernetes.create_serviceaccount")
     def create_serviceaccount(self, name, namespace):
         """Create serviceAccount for namespace.

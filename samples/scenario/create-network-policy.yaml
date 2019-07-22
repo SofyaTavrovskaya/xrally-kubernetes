@@ -1,0 +1,11 @@
+---
+version: 2
+title: Create network policy
+subtasks:
+- title: Run a single workload with create network policy
+  scenario:
+    Kubernetes.create_network_policy: {}
+  runner:
+    constant:
+      concurrency: 1
+      times: 1
