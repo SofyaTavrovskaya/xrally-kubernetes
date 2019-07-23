@@ -296,24 +296,13 @@ class Kubernetes(service.Service):
                                    read_method=self.get_namespace)
 
     @atomic.action_timer("kubernetes.create_network_policy")
-    def create_network_policy(self, status_wait=True):
+    def create_network_policy(self, namespace, status_wait=True):
         """Create network policy and wait until status phase won't be Active.
 
         :param status_wait: wait network policy for Active status
+        :param namespace: wait network policy for Active status
         """
-        namespace_name = self.generate_random_name()
-        manifest = {
-            "apiVersion": "v1",
-            "kind": "Namespace",
-            "metadata": {
-                "name": namespace_name,
-                "labels": {
-                    "role": namespace_name
-                }
-            }
-        }
 
-        namespace = self.v1_client.create_namespace(body=manifest)
         name = self.generate_random_name()
         manifest = {
             "apiVersion": "extensions/v1beta1",
