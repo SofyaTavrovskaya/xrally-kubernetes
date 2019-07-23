@@ -55,4 +55,4 @@ class CreateAndDeleteNamespace(common_scenario.BaseKubernetesScenario):
         :param status_wait: wait namespace status after creation
         """
         name = self.client.create_namespace(status_wait=status_wait)
-        self.client.delete_namespace(name, status_wait=status_wait)
+        # self.client.delete_namespace(name, status_wait=status_wait)

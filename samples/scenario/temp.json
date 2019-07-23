@@ -1,0 +1,22 @@
+{
+    "apiVersion": "v1",
+    "kind": "Namespace",
+    "metadata": {
+        "creationTimestamp": "2019-07-23T06:43:47Z",
+        "deletionTimestamp": "2019-07-23T10:01:20Z",
+        "labels": {
+            "role": "rally-1db0ed3a-ydehyuco"
+        },
+        "name": "rally-1db0ed3a-ydehyuco",
+        "resourceVersion": "6293174",
+        "selfLink": "/api/v1/namespaces/rally-1db0ed3a-ydehyuco",
+        "uid": "3914a051-ad15-11e9-aa39-5254008ea1fb"
+    },
+    "spec": {
+        "finalizers": [
+        ]
+    },
+    "status": {
+        "phase": "Terminating"
+    }
+}

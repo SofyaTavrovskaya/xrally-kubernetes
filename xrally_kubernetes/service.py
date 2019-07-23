@@ -331,24 +331,17 @@ class Kubernetes(service.Service):
                 ]
             }
         }
-        self.v1beta1_ext.create_namespaced_network_policy(namespace=namespace, body=manifest)
-        if status_wait:
-            with atomic.ActionTimer(self,
-                                    "kubernetes.wait_for_netpol_become_active"):
-                wait_for_status(name,
-                                resource_type="Network policy",
-                                status="Active",
-                                read_method=self.get_network_policy)
+        name = self.v1beta1_ext.create_namespaced_network_policy(namespace=namespace, body=manifest)
+        print(name)
         return name
 
     @atomic.action_timer("Kubernetes.get_network_policy")
-    def get_network_policy(self, name):
+    def get_network_policy(self, name, namespace, **kwargs):
         """Get namespace status.
 
         :param name: namespace name
         """
-        return self.read_namespaced_network_policy(name)
-
+        return self.v1beta1_ext.read_namespaced_network_policy(name=name, namespace=namespace)
     @atomic.action_timer("kubernetes.create_serviceaccount")
     def create_serviceaccount(self, name, namespace):
         """Create serviceAccount for namespace.

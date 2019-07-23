@@ -13,9 +13,9 @@ class CreateNetworkPolicy(common_scenario.BaseKubernetesScenario):
         """
 
         namespace = self.choose_namespace()
-
+        print(namespace)
         name = self.client.create_network_policy(
             namespace=namespace,
             status_wait=status_wait,
         )
-
+        print(name) 
