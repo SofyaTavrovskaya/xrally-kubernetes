@@ -301,10 +301,22 @@ class Kubernetes(service.Service):
 
         :param status_wait: wait network policy for Active status
         """
-        namespace = self.v1_client.create_namespace()
+        namespace_name = self.generate_random_name()
+        manifest = {
+            "apiVersion": "v1",
+            "kind": "Namespace",
+            "metadata": {
+                "name": namespace_name,
+                "labels": {
+                    "role": namespace_name
+                }
+            }
+        }
+
+        namespace = self.v1_client.create_namespace(body=manifest)
         name = self.generate_random_name()
         manifest = {
-            "apiVersion": "networking.k8s.io/v1",
+            "apiVersion": "extensions/v1beta1",
             "kind": "NetworkPolicy",
             "metadata": {
                 "name": name
