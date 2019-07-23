@@ -296,7 +296,7 @@ class Kubernetes(service.Service):
                                    read_method=self.get_namespace)
 
     @atomic.action_timer("kubernetes.create_network_policy")
-    def create_network_policy(self):
+    def create_network_policy(self, status_wait=True):
         """Create network policy and wait until status phase won't be Active.
 
         :param status_wait: wait network policy for Active status
@@ -343,8 +343,15 @@ class Kubernetes(service.Service):
             }
         }
         self.v1beta1_ext.create_namespaced_network_policy(namespace=namespace, body=manifest)
+        if status_wait:
+            with atomic.ActionTimer(self,
+                                    "kubernetes.wait_for_netpol_become_active"):
+                wait_for_status(name,
+                                resource_type="Network policy",
+                                status="Active",
+                                read_method=self.get_network_policy)
+        return name
 
-   
     @atomic.action_timer("Kubernetes.get_network_policy")
     def get_network_policy(self, name):
         """Get namespace status.
