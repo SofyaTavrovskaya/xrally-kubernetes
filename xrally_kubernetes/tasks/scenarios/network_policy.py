@@ -4,7 +4,7 @@ from xrally_kubernetes.tasks import scenario as common_scenario
 
 @scenario.configure(name="Kubernetes.create_network_policy",
                     platform="kubernetes")
-class CreateNetworkPolicy(common_scenario.BaseKubernetesScenario):
+class CreateAndDeleteNetworkPolicy(common_scenario.BaseKubernetesScenario):
 
     def run(self, status_wait=True):
         """Create network policy, wait until it won't be active and then delete it.
@@ -12,9 +12,12 @@ class CreateNetworkPolicy(common_scenario.BaseKubernetesScenario):
         :param status_wait: wait namespace status after creation
         """
 
-        namespace = self.choose_namespace()
-        self.client.create_network_policy(
-            namespace=namespace,
+        name = self.client.create_network_policy(
+            namespace="default",
             status_wait=status_wait,
         )
-        
+
+        self.client.delete_network_policy(
+            name=name,
+            namespace="default"
+        )

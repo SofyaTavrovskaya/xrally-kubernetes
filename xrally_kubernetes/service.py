@@ -341,6 +341,13 @@ class Kubernetes(service.Service):
         :param name: namespace name
         """
         return self.v1beta1_ext.read_namespaced_network_policy(name=name, namespace=namespace)
+
+    def delete_network_policy(self, name, namespace):
+        self.self.v1beta1_ext.delete_namespaced_network_policy(
+            name=name,
+            namespace=namespace,
+            body=k8s_config.V1DeleteOptions()
+
     @atomic.action_timer("kubernetes.create_serviceaccount")
     def create_serviceaccount(self, name, namespace):
         """Create serviceAccount for namespace.
