@@ -10,5 +10,5 @@ subtasks:
       count: 1
   runner:
     constant:
-      concurrency: 1
-      times: 1
+      concurrency: 10
+      times: 10

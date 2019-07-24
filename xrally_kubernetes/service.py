@@ -332,7 +332,6 @@ class Kubernetes(service.Service):
             }
         }
         name = self.v1beta1_ext.create_namespaced_network_policy(namespace=namespace, body=manifest)
-        print(name)
         return name
 
     @atomic.action_timer("Kubernetes.get_network_policy")
