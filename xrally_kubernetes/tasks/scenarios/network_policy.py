@@ -2,7 +2,7 @@ from rally.task import scenario
 
 from xrally_kubernetes.tasks import scenario as common_scenario
 
-@scenario.configure(name="Kubernetes.create_network_policy",
+@scenario.configure(name="Kubernetes.create_and_delete_network_policy",
                     platform="kubernetes")
 class CreateAndDeleteNetworkPolicy(common_scenario.BaseKubernetesScenario):
 
@@ -16,7 +16,6 @@ class CreateAndDeleteNetworkPolicy(common_scenario.BaseKubernetesScenario):
             namespace="default",
             status_wait=status_wait,
         )
-
         self.client.delete_network_policy(
             name=name,
             namespace="default"

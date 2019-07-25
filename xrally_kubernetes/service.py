@@ -342,11 +342,20 @@ class Kubernetes(service.Service):
         """
         return self.v1beta1_ext.read_namespaced_network_policy(name=name, namespace=namespace)
 
+    @atomic.action_timer("kubernetes.delete_network_policy")
     def delete_network_policy(self, name, namespace):
-        self.self.v1beta1_ext.delete_namespaced_network_policy(
+        body = {'api_version': "extensions/v1beta1",
+                'dry_run': None,
+                'grace_period_seconds': None,
+                'kind': "NetworkPolicy",
+                'orphan_dependents': None,
+                'preconditions': None,
+                'propagation_policy': None}
+        self.v1beta1_ext.delete_namespaced_network_policy(
             name=name,
             namespace=namespace,
-            body=k8s_config.V1DeleteOptions()
+            body=body
+        )
 
     @atomic.action_timer("kubernetes.create_serviceaccount")
     def create_serviceaccount(self, name, namespace):

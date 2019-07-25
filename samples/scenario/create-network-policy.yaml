@@ -4,7 +4,7 @@ title: Create network policy
 subtasks:
 - title: Run a single workload with create network policy
   scenario:
-    Kubernetes.create_network_policy: {}
+    Kubernetes.create_and_delete_network_policy: {}
   contexts:
     namespaces:
       count: 1
