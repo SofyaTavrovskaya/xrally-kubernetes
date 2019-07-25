@@ -11,12 +11,13 @@ class CreateAndDeleteNetworkPolicy(common_scenario.BaseKubernetesScenario):
 
         :param status_wait: wait namespace status after creation
         """
-
-        name = self.client.create_network_policy(
+        name = self.generate_random_name()
+        self.client.create_network_policy(
+            name,
             namespace="default",
-            status_wait=status_wait,
+            status_wait=status_wait
         )
         self.client.delete_network_policy(
-            name=name,
+            name,
             namespace="default"
         )

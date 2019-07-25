@@ -285,25 +285,24 @@ class Kubernetes(service.Service):
         :param name: namespace name
         :param status_wait: wait namespace for termination
         """
+        body=k8s_config.V1DeleteOptions()
         self.v1_client.delete_namespace(name=name,
-                                        body=k8s_config.V1DeleteOptions())
-
+                                        body=body)
         if status_wait:
             with atomic.ActionTimer(self,
-                                    "kubernetes.wait_namespace_termination"):
+                    "kubernetes.wait_namespace_termination"):
                 wait_for_not_found(name,
-                                   resource_type="Namespace",
-                                   read_method=self.get_namespace)
+                        resource_type="Namespace",
+                        read_method=self.get_namespace)
 
     @atomic.action_timer("kubernetes.create_network_policy")
-    def create_network_policy(self, namespace, status_wait=True):
+    def create_network_policy(self, name, namespace, status_wait=True):
         """Create network policy and wait until status phase won't be Active.
 
         :param status_wait: wait network policy for Active status
         :param namespace: wait network policy for Active status
         """
 
-        name = self.generate_random_name()
         manifest = {
             "apiVersion": "extensions/v1beta1",
             "kind": "NetworkPolicy",
@@ -331,8 +330,8 @@ class Kubernetes(service.Service):
                 ]
             }
         }
-        name = self.v1beta1_ext.create_namespaced_network_policy(namespace=namespace, body=manifest)
-        return name
+        print(manifest)
+        self.v1beta1_ext.create_namespaced_network_policy(namespace=namespace, body=manifest)
 
     @atomic.action_timer("Kubernetes.get_network_policy")
     def get_network_policy(self, name, namespace, **kwargs):
@@ -344,21 +343,13 @@ class Kubernetes(service.Service):
 
     @atomic.action_timer("kubernetes.delete_network_policy")
     def delete_network_policy(self, name, namespace):
-        body = {'api_version': "extensions/v1beta1",
-                'dry_run': None,
-                'grace_period_seconds': None,
-                'kind': "NetworkPolicy",
-                'orphan_dependents': None,
-                'preconditions': None,
-                'propagation_policy': None}
-        self.v1beta1_ext.delete_namespaced_network_policy(
-            name=name,
-            namespace=namespace,
-            body=body
-        )
 
-    @atomic.action_timer("kubernetes.create_serviceaccount")
+        self.v1beta1_ext.delete_namespaced_network_policy(name, namespace=namespace, body=k8s_config.V1DeleteOptions()) 
+
+
+   
     def create_serviceaccount(self, name, namespace):
+        
         """Create serviceAccount for namespace.
 
         :param name: serviceAccount name
